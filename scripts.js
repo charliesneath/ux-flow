@@ -19,7 +19,14 @@ $(function() {
      saveFlow();
   });
 
+  $(document.body).on('focus', '.moment', function() {
+    $(this).removeClass('new');
+  })
+
   $(document.body).on('blur', '.moment', function() {
+      if ($(this).find('textarea').val() == '') {
+        $(this).addClass('new');
+      }
       saveFlow();
   })
 
