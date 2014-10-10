@@ -1,0 +1,63 @@
+#container {
+    position: relative;
+    height: 100%;
+}
+
+#moments {
+    position: relative;
+    transform: translateY(-50%);
+    top: 50%;
+    width: auto;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    /* Remove the white space */
+    font-size: 0;
+    text-align: center;
+}
+
+.moment {
+    margin: 0;
+    border: 1px solid #000000;
+    display: inline-block;
+    width: 250px;
+    height: 250px;
+    text-align: center;
+    line-height: 250px;
+    font-size: 16px;
+    cursor: move;
+}
+
+.moment.new {
+    color: #CCCCCC;
+    border: 1px solid #CCCCCC;
+}
+
+.moment.dragenter {
+    background-color: red;
+}
+
+.add-moment {
+    color: #CCCCCC;
+    display: inline-block;
+    height: 250px;
+    width: 50px;
+    text-align: center;
+    line-height: 250px;
+    font-size: 16px;
+}
+
+.add-moment:hover {
+    background-color: #EFEFEF;
+}
+
+.content {
+    line-height: 250px;
+    font-size: 16px;
+    text-align: center;
+    margin: 0 20px;
+}
+
+p {
+    margin: 0;
+}
