@@ -16,6 +16,17 @@
     text-align: center;
 }
 
+#moments textarea {
+    height: 100%;
+    width: 100%;
+    outline: none;
+    resize: none;
+    padding: 20px;
+    text-align: center;
+    border: none;
+    vertical-align: middle;
+}
+
 .moment {
     margin: 0;
     border: 1px solid #000000;
@@ -33,7 +44,7 @@
     border: 1px solid #CCCCCC;
 }
 
-.moment.dragenter {
+textarea.dragenter {
     background-color: red;
 }
 
