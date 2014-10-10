@@ -46,10 +46,12 @@ $(document.body).on('dragend', '.moment textarea', function(e) {
 
     // Don't do anything if dropping the same column we're dragging.
     if (dragSrcEl != this && this.value != '') {
-
       // Set the source column's HTML to the HTML of the column we dropped on.
       dragSrcEl.value = this.value;
       this.value = e.originalEvent.dataTransfer.getData('text/plain');
+    } else if (this.value == '') {
+      dragSrcEl.value = '';
+      this.value = e.originalEvent.dataTransfer.getData('text/plain');      
     }
 
     if ($(dragSrcEl).hasClass('new') && !$(this).hasClass('new')) {
