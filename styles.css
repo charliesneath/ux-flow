@@ -1,3 +1,7 @@
+body {
+    font-family: sans-serif;
+}
+
 #container {
     position: relative;
     height: 100%;
@@ -46,7 +50,7 @@
 }
 
 textarea.dragenter {
-    background-color: red;
+    background-color: #F8E71C;
 }
 
 .add-moment {
@@ -63,13 +67,24 @@ textarea.dragenter {
     background-color: #EFEFEF;
 }
 
-.content {
-    line-height: 250px;
-    font-size: 16px;
-    text-align: center;
-    margin: 0 20px;
+#delete-moment-container {
+    width: 100%;
+    position: absolute;
+    bottom: 10%;
 }
 
-p {
-    margin: 0;
+#delete-moment {
+    position: relative;
+    border: 1px solid #CCCCCC;
+    padding: 20px;
+    width: 60px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 12;
+    font-family: 'Lucida Grande', 'sans-serif';
+    color: #CCCCCC;
+}
+
+.delete-enter {
+    background-color: red;
 }
