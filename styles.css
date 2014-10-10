@@ -1,16 +1,25 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Lucida Grande', 'sans-serif';
 }
 
 #container {
     position: relative;
     height: 100%;
+    margin-top: 10%;
+}
+
+#title {
+    width: 100%;
+    text-align: center;
+}
+
+#title #back {
+    font-size: 12px;
+    color: #CCCCCC;
+    text-decoration: none;
 }
 
 #moments {
-    position: relative;
-    transform: translateY(-50%);
-    top: 50%;
     width: auto;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -68,9 +77,8 @@ textarea.dragenter {
 }
 
 #delete-moment-container {
+    margin-top: 50px;
     width: 100%;
-    position: absolute;
-    bottom: 10%;
 }
 
 #delete-moment {
@@ -81,7 +89,6 @@ textarea.dragenter {
     margin: 0 auto;
     text-align: center;
     font-size: 12;
-    font-family: 'Lucida Grande', 'sans-serif';
     color: #CCCCCC;
 }
 

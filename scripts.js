@@ -4,13 +4,24 @@ var draggedElement = null;
 var elementToDelete = null;
 
 $(function() {
+    loadFlow();
+
+    $('#title #back').click(function() {
+        saveFlow();
+    })
+
   $(document.body).on('click', '.add-moment', function() {
     if ($(this).prev().length > 0) {
       $(this).after(newAddMoment).after(newMoment);
      } else {
        $('#moments').prepend(newMoment).prepend(newAddMoment);
      }
+     saveFlow();
   });
+
+  $(document.body).on('blur', '.moment', function() {
+      saveFlow();
+  })
 
   $(document.body).on('dragstart', '.moment textarea', function(e) {
 
@@ -66,6 +77,7 @@ $(function() {
     }
 
     e.originalEvent.stopPropagation();
+    saveFlow();
   })
 
   // DELETE MOMENT
@@ -95,6 +107,34 @@ $(function() {
       $(draggedElement).parents('.moment').remove();
       $(this).removeClass('delete-enter');
       e.originalEvent.stopPropagation();
+      saveFlow();
   })
-
 })
+
+function saveFlow() {
+  var flow = new Array();
+  var moments = $('.moment');
+  for (i = 0; i < moments.length; i++) {
+    flow.push($(moments[i]).find('textarea').val());
+  }
+
+  localStorage.setItem('ux-flow', JSON.stringify(flow));
+  console.log(JSON.parse(localStorage.getItem('ux-flow')));
+}
+
+function loadFlow() {
+  var flow = new Array;
+
+  if (localStorage && localStorage.getItem('ux-flow')) {
+    var data = localStorage.getItem('ux-flow')
+    data = JSON.parse(data);
+  }
+
+  $('#moments').append('<div class="add-moment">+</div>');
+
+  for (i = 0; i < data.length; i++) {
+    flow.push(data[i]);
+    $('#moments').append('<div class="moment" draggable="true"><textarea placeholder="new moment" draggable=true>' + flow[i] + '</textarea></div>');
+    $('#moments').append('<div class="add-moment">+</div>');
+  }
+}
