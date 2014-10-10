@@ -1,4 +1,4 @@
-var newMoment = '<div class="moment new" draggable="true">new moment</div>';
+var newMoment = '<div class="moment new" draggable="true"><textarea placeholder="new moment" draggable=true></textarea></div>';
 var newAddMoment = '<div class="add-moment">+</div>';
 var dragSrcEl = null;
 
@@ -11,52 +11,46 @@ $(function() {
      }
   });
 
-  $(document.body).on('click', '.moment', function() {
-    var momentContent = prompt('what is this moment?');
-    momentContent = momentContent.trim();
-    if (momentContent !== '') {
-      $(this).removeClass('new');
-      this.innerHTML = momentContent;
-    }
-  })
+  $(document.body).on('dragstart', '.moment textarea', function(e) {
 
-  $(document.body).on('dragstart', '.moment', function(e) {
       $(this).removeClass('dragenter');
 
       dragSrcEl = this;
       e.originalEvent.dataTransfer.effectAllowed = 'move';
-      e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
+      e.originalEvent.dataTransfer.setData('text/plain', this.value);
   })
 
-  $(document.body).on('dragleave', '.moment', function(e) {
+  $(document.body).on('dragleave', '.moment textarea', function(e) {
       $(this).removeClass('dragenter');
   })
 
-  $(document.body).on('dragenter', '.moment', function(e) {
+  $(document.body).on('dragenter', '.moment textarea', function(e) {
     $(this).addClass('dragenter');
     // Necessary to allow for a drop
     e.originalEvent.preventDefault();
   })
 
-  $(document.body).on('dragover', '.moment', function(e) {
+  $(document.body).on('dragover', '.moment textarea', function(e) {
       // Necessary to allow for a drop
       e.originalEvent.preventDefault();
   })  
 
-$(document.body).on('dragend', '.moment', function(e) {
+$(document.body).on('dragend', '.moment textarea', function(e) {
       // Necessary to allow for a drop
       $(this).removeClass('dragenter');
   })  
 
-  $(document.body).on('drop', '.moment', function(e) {
-    // Don't do anything if dropping the same column we're dragging.
-    if (dragSrcEl != this) {
-      // Set the source column's HTML to the HTML of the column we dropped on.
-      dragSrcEl.innerHTML = this.innerHTML;
-      this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
-    }
-
+  $(document.body).on('drop', '.moment textarea', function(e) {
     $(this).removeClass('dragenter');
+
+
+    // Don't do anything if dropping the same column we're dragging.
+    if (dragSrcEl != this && this.value != '') {
+
+      // Set the source column's HTML to the HTML of the column we dropped on.
+      dragSrcEl.value = this.value;
+      this.value = e.originalEvent.dataTransfer.getData('text/plain');
+    }
 
     if ($(dragSrcEl).hasClass('new') && !$(this).hasClass('new')) {
       $(this).addClass('new');
