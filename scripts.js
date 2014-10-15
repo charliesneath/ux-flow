@@ -1,33 +1,55 @@
-var newMoment = '<div class="moment new" draggable="true"><textarea placeholder="new moment" draggable=true></textarea></div>';
+var newMoment = '<div class="moment" draggable="true"><textarea class="empty" draggable=true></textarea></div>';
+// var newMoment = '<div class="moment new" draggable="true"></div>';
 var newAddMoment = '<div class="add-moment"></div>';
+var newSequence = '<div class="sequence"></div>'
+var newAddSequence = '<div class="add-sequence"></div>'
 var draggedElement = null;
 var elementToDelete = null;
 
 $(function() {
-    loadFlow();
+    //loadFlow();
 
-    $('#title #back').click(function() {
-        saveFlow();
+    $('#title').click(function() {
+        var title = prompt('Name of flow:');
+        $('#title h2').text(title);
     })
 
   $(document.body).on('click', '.add-moment', function() {
-    if ($(this).prev().length > 0) {
-      $(this).after(newAddMoment).after(newMoment);
+    if ($(this).index == 0) {
+      $('.sequence').prepend(newMoment).prepend(newAddMoment);
      } else {
-       $('#moments').prepend(newMoment).prepend(newAddMoment);
+       $(this).after(newAddMoment).after(newMoment);
      }
-     saveFlow();
+     // saveFlow();
   });
 
-  $(document.body).on('focus', '.moment', function() {
-    $(this).removeClass('new');
+  $(document.body).on('click', '.add-sequence', function() {
+    // Add new sequence;
+    $(this).after(newSequence);
+
+    var clickedAddSequence = this;
+    var previousSequence = $(this).prev();
+    var sequence = $(this).next();
+    var moments = $(previousSequence).find('.moment');
+    
+    $(sequence).append(newAddMoment);
+    for (i = 0; i < moments.length; i++) {
+      $(sequence).append(newMoment);
+      $(sequence).append(newAddMoment);
+    }
+
+    $(sequence).after(newAddSequence);
   })
 
-  $(document.body).on('blur', '.moment', function() {
-      if ($(this).find('textarea').val() == '') {
-        $(this).addClass('new');
+  $(document.body).on('focus', 'textarea.empty', function() {
+    $(this).removeClass('empty');
+  })
+
+  $(document.body).on('blur', 'textarea', function() {
+      if ($(this).val() == '') {
+        $(this).addClass('empty');
       }
-      saveFlow();
+      //saveFlow();
   })
 
   $(document.body).on('dragstart', '.moment textarea', function(e) {
@@ -60,27 +82,28 @@ $(function() {
   })  
 
   $(document.body).on('drop', '.moment textarea', function(e) {
-    $(this).removeClass('dragenter');
+    var dropLocation = this;
 
+    $(dropLocation).removeClass('dragenter');
 
     // Don't do anything if dropping the same column we're dragging.
-    if (draggedElement != this && this.value != '') {
+    if (draggedElement != dropLocation && dropLocation.value != '') {
       // Set the source column's HTML to the HTML of the column we dropped on.
-      draggedElement.value = this.value;
+      draggedElement.value = dropLocation.value;
       this.value = e.originalEvent.dataTransfer.getData('text/plain');
-    } else if (this.value == '') {
+    } else if (dropLocation.value == '') {
       draggedElement.value = '';
-      this.value = e.originalEvent.dataTransfer.getData('text/plain');      
+      dropLocation.value = e.originalEvent.dataTransfer.getData('text/plain');      
     }
 
-    if ($(draggedElement).hasClass('new') && !$(this).hasClass('new')) {
-      $(this).addClass('new');
-      $(draggedElement).removeClass('new');
+    if ($(draggedElement).hasClass('empty') && !$(dropLocation).hasClass('empty')) {
+      $(dropLocation).addClass('empty');
+      $(draggedElement).removeClass('empty');
     }
 
-     if ($(this).hasClass('new') && !$(draggedElement).hasClass('new')) {
-      $(this).removeClass('new');
-      $(draggedElement).addClass('new');
+     if ($(dropLocation).hasClass('empty') && !$(draggedElement).hasClass('empty')) {
+      $(dropLocation).removeClass('empty');
+      $(draggedElement).addClass('empty');
     }
 
     e.originalEvent.stopPropagation();
@@ -120,9 +143,9 @@ $(function() {
 
 function saveFlow() {
   var flow = new Array();
-  var moments = $('.moment');
-  for (i = 0; i < moments.length; i++) {
-    flow.push($(moments[i]).find('textarea').val());
+  var sequence = $('.moment');
+  for (i = 0; i < sequence.length; i++) {
+    flow.push($(sequence[i]).find('textarea').val());
   }
 
   localStorage.setItem('ux-flow', JSON.stringify(flow));
@@ -137,11 +160,29 @@ function loadFlow() {
     data = JSON.parse(data);
   }
 
-  $('#moments').append('<div class="add-moment"></div>');
+  $('.sequence').append('<div class="add-moment"></div>');
 
   for (i = 0; i < data.length; i++) {
     flow.push(data[i]);
-    $('#moments').append('<div class="moment" draggable="true"><textarea placeholder="new moment" draggable=true>' + flow[i] + '</textarea></div>');
-    $('#moments').append('<div class="add-moment"></div>');
+    $('.sequence').append('<div class="moment" draggable="true"><textarea placeholder="new moment" draggable=true>' + flow[i] + '</textarea></div>');
+    $('.sequence').append('<div class="add-moment"></div>');
   }
+}
+
+function addSequence(previousSequence) {
+  var sequence = newSequence;
+  var moments = $(previousSequence).find('.moment');
+
+  // Add initial "add new moment button"
+  $(sequence).text(newAddMoment);
+  alert(sequence);
+
+  // Add the rest of the elements to the sequence.
+  for (i = 0; i < moments.length; i++) {
+    $(newMoment).appendTo();
+    $(sequence).append(newAddMoment);
+    alert(sequence);
+  }
+
+  $(previousSequence).after(sequence).html();
 }

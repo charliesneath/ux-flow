@@ -2,19 +2,19 @@
 <script src="scripts.js"></script>
 
 <link type="text/css" rel="stylesheet" href="styles.css" />
-<div id="container">
-    <div id="title">
-        <p><a id="back">back to projects</a></p>
-        <h2>FLOW NAME</h2>
-    </div>
-    <div id="moments">
-        <!-- <div class="add-moment">+</div> -->
-        <!-- <div class="moment new"> -->
-            <!-- <textarea placeholder="new moment" draggable=true></textarea> -->
-        <!-- </div> -->
-        <!-- <div class="add-moment">+</div> -->
-    </div>
-    <div id="delete-moment-container">
-        <div id="delete-moment" draggable="true">DELETE</div>
-    </div>
+
+<div id="title">
+    <!-- <p><a id="back">back to projects</a></p> -->
+    <h2>FLOW NAME</h2>
 </div>
+
+<div id="flow">
+    <div class="sequence">
+        <div class="add-moment"></div>
+        <div class="moment"><textarea class="empty" draggable="true"></textarea></div>
+        <div class="add-moment"></div>
+    </div>
+    <div class="add-sequence"></div>
+</div>
+
+<div id="delete-moment" draggable="true">DELETE</div>
