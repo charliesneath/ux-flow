@@ -137,7 +137,7 @@ function loadFlow() {
     data = JSON.parse(data);
   }
 
-  $('#moments').append('<div class="add-moment">+</div>');
+  $('#moments').append('<div class="add-moment"></div>');
 
   for (i = 0; i < data.length; i++) {
     flow.push(data[i]);
