@@ -142,6 +142,6 @@ function loadFlow() {
   for (i = 0; i < data.length; i++) {
     flow.push(data[i]);
     $('#moments').append('<div class="moment" draggable="true"><textarea placeholder="new moment" draggable=true>' + flow[i] + '</textarea></div>');
-    $('#moments').append('<div class="add-moment">+</div>');
+    $('#moments').append('<div class="add-moment"></div>');
   }
 }
