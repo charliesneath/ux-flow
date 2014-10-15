@@ -1,5 +1,5 @@
 var newMoment = '<div class="moment new" draggable="true"><textarea placeholder="new moment" draggable=true></textarea></div>';
-var newAddMoment = '<div class="add-moment">+</div>';
+var newAddMoment = '<div class="add-moment"></div>';
 var draggedElement = null;
 var elementToDelete = null;
 
