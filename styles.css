@@ -1,16 +1,22 @@
 body {
     font-family: 'Lucida Grande', 'sans-serif';
+    padding: 0;
+    margin: 0;
 }
 
-#container {
+#flow {
     position: relative;
-    height: 100%;
-    margin-top: 10%;
+    width: auto;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding: 50px;
+    float: left;
 }
 
-#title {
-    width: 100%;
-    text-align: center;
+#title h2 {
+    margin: 20px 0 0 100px;
+    text-transform: uppercase;
 }
 
 #title #back {
@@ -19,17 +25,12 @@ body {
     text-decoration: none;
 }
 
-#moments {
-    width: auto;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    white-space: nowrap;
+.sequence {
     /* Remove the white space */
     font-size: 0;
-    text-align: center;
 }
 
-#moments textarea {
+.moment textarea {
     height: 100%;
     width: 100%;
     outline: none;
@@ -39,11 +40,29 @@ body {
     border: none;
     vertical-align: middle;
     line-height: 24px;
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+.moment textarea.empty  {
+    border: 1px solid #EFEFEF;
+}
+
+.moment textarea.dragenter {
+    background-color: #F8E71C;
+}
+
+.add-sequence {
+    height: 50px;
+    margin: 0 50px;
+}
+
+.add-sequence:hover {
+    background-color: #EFEFEF;
 }
 
 .moment {
     margin: 0;
-    border: 1px solid #000000;
     display: inline-block;
     width: 250px;
     height: 250px;
@@ -51,15 +70,11 @@ body {
     line-height: 250px;
     font-size: 16px;
     cursor: move;
+    vertical-align: middle;
 }
 
 .moment.new {
-    color: #CCCCCC;
-    border: 1px solid #CCCCCC;
-}
-
-textarea.dragenter {
-    background-color: #F8E71C;
+    background-color: #EFEFEF;
 }
 
 .add-moment {
@@ -70,28 +85,26 @@ textarea.dragenter {
     text-align: center;
     line-height: 250px;
     font-size: 16px;
+    vertical-align: middle;
 }
 
 .add-moment:hover {
     background-color: #EFEFEF;
 }
 
-#delete-moment-container {
-    margin-top: 50px;
-    width: 100%;
-}
-
 #delete-moment {
-    position: relative;
-    border: 1px solid #CCCCCC;
-    padding: 20px;
-    width: 60px;
-    margin: 0 auto;
+    position: fixed;
+    width: 100%;
     text-align: center;
     font-size: 12;
     color: #CCCCCC;
+    height: 100px;
+    line-height: 100px;
+    bottom: 0;
+    border-top: 1px solid #CCCCCC;
+    background-color: white;
 }
 
-.delete-enter {
+#delete-moment.delete-enter {
     background-color: red;
 }
