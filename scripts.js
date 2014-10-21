@@ -86,13 +86,28 @@ $(function() {
         $(this).removeClass('empty');
     })
 
+    $(document.body).on('click', '.moment', function() {
+        $(this).find('p').hide();
+        $(this).find('textarea').show();
+        $(this).find('textarea').focus();
+        $(this).addClass('focus');
+    })
+
     $(document.body).on('blur', 'textarea', function() {
         if ($(this).val() == '') {
-          $(this).addClass('empty');
+          $(this).parents('.moment').addClass('empty');
         }
+        highlightText(this);
+        $(this).parents('.moment').removeClass('focus');
         saveFlow();
     })
 
+    $(document).keyup(function(e) {
+        if (e.keyCode == 27) {
+            $(':focus').blur();
+        }
+    });
+    
     // MOMENT DRAG
 
     $(document.body).on('dragstart', '.moment textarea', function(e) {
@@ -243,4 +258,29 @@ function locationHashChanged() {
     } else if (location.hash === "#app") {
         loadFlow();
     }
+}
+
+function highlightText(textarea) {
+    var moment = $(textarea).parents('.moment');
+    var newLineRegex = /^.*$/gm;
+    var questionRegex = /^.*\?$/gm;
+    var content = $(textarea).val().match(newLineRegex);
+
+    // Reset the content in the div
+    $(moment).find('p').remove();
+
+    // Find all of the content in the textarea.
+    if (content.length > 0) {
+        for (i=0; i < content.length; i++) {
+            var isQuestion = questionRegex.test(content[i]);
+            if (content[i] != '' &&  isQuestion == true) {
+                $(moment).append('<p><span class="highlight">' + content[i] + '</span></p>');
+            } else {
+                $(moment).append('<p>' + content[i] + '</p>');
+            }
+        }
+    }
+
+    // Hide the editable content.
+    $(textarea).hide();
 }
