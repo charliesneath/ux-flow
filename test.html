@@ -1,82 +1,75 @@
+<!doctype html>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+<script>
+    $(function() {
+        $(document.body).on('click', '#text', function() {
+            $(this).find('p').hide();
+            $(this).find('textarea').show();
+            $(this).find('textarea').focus();
+        })
+
+        $(document.body).on('blur', 'textarea', function() {
+            var newLineRegex = /^.*$/gm;
+            var questionRegex = /^.*\?$/gm;
+            var content = $(this).val().match(newLineRegex);
+            
+            // Reset the content in the div
+            $('#text p').remove();
+
+            // Find all of the content in the textarea.
+            if (content) {
+                for (i=0; i < content.length; i++) {
+                    var isQuestion = questionRegex.test(content[i]);
+                    if (content[i] != '' &&  isQuestion == true) {
+                        $('#text').append('<p><span class="highlight">' + content[i] + '</span></p>');
+                    } else {
+                        $('#text').append('<p>' + content[i] + '</p>');
+                    }
+                }
+            }
+
+            // Hide the editable content.
+            $(this).hide();
+        })
+    })
+</script>
+
 <style>
     body {
         width: auto;
         overflow-x: scroll;
         overflow-y: hidden;
-        white-space: nowrap;        
-    }
-
-    #flow {
-        width: auto;
-        overflow-x: scroll;
-        overflow-y: hidden;
         white-space: nowrap;
- 
     }
 
-    .scene {
-        border: 1px solid black;
-        display: inline-block;
-        vertical-align: top;
-    }
-    
-    .sequence {
-        margin: 20px 0;
-        overflow: hidden;
-    }
-
-
-    .frame {
-        background-color: orange;
+    #text {
         height: 200px;
         width: 200px;
-        display: inline-block;
-        margin: 20px;
+        border: 1px solid black;
+        color: black;
+        text-align: center;
+        font-family: "Lucida Grande";
+        font-size: 11px;
     }
 
-    .label {
-        text-transform: uppercase;
-        font-size: 24px;
-        width: 100%;
-        background-color: #CCCCCC;
+    .highlight {
+        background-color: yellow;
     }
+
+    textarea {
+        display: none;
+        height: 200px;
+        width: 200px;
+        border: none;
+        text-align: center;
+        padding: 11px;
+        box-sizing: border-box;
+    }
+
 </style>
 
-<div id="flow">
-    <!-- <div class="scene"> -->
-        <div class="label">sign in</div>
-        <div class="sequence">
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-        </div>
-        <div class="sequence">
-            <div class="frame"></div>
-            <div class="frame"></div>
-        </div>
-        <div class="sequence">
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-        </div>
-    <!-- </div> -->
-
-<!--     <div class="scene">
-        <div class="sequence">
-            <div class="frame"></div>
-        </div>
-        <div class="sequence">
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-            <div class="frame"></div>
-        </div>
-    </div> -->
+<div id="text">
+    <textarea></textarea>
 </div>
