@@ -1,4 +1,4 @@
-var newMoment = '<div class="moment" draggable="true"><div class="delete-moment">&times;</div><textarea class="empty" draggable=true></textarea></div>';
+var newMoment = '<div class="moment" draggable="true"><div class="delete-moment">&times;</div><div class="highlight-moment">&#9679;</div><textarea class="empty" draggable=true></textarea></div>';
 // var newMoment = '<div class="moment new" draggable="true"></div>';
 var newAddMoment = '<div class="add-moment"></div>';
 var newSequence = '<div class="sequence" draggable="true"></div>'
@@ -53,6 +53,7 @@ $(function() {
 
     $(document.body).on('hover', '.moment', function() {
       $(this).find('.delete-moment').toggle();
+      $(this).find('.highlight-moment').toggle();
        saveFlow();
     });
 
@@ -77,6 +78,11 @@ $(function() {
         }
         saveFlow();
     })
+
+    $(document.body).on('click', '.highlight-moment', function() {
+        $(this).parents('.moment').toggleClass('highlight');
+        return;
+    })
     
     $(document.body).on('click', '.add-sequence', function() {
         addNewSequence($(this).index());
@@ -86,11 +92,13 @@ $(function() {
         $(this).removeClass('empty');
     })
 
-    $(document.body).on('click', '.moment', function() {
-        $(this).find('p').hide();
-        $(this).find('textarea').show();
-        $(this).find('textarea').focus();
-        $(this).addClass('focus');
+    $(document.body).on('click', '.moment', function(e) {
+        if (e.target == this) {
+            $(this).find('p').hide();
+            $(this).find('textarea').show();
+            $(this).find('textarea').focus();
+            $(this).addClass('focus');
+        }
     })
 
     $(document.body).on('blur', 'textarea', function() {
