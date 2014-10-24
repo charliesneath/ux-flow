@@ -107,6 +107,7 @@ body {
     border: 1px solid black;
     box-sizing: border-box;
     white-space: normal;
+    padding: 1em;
 }
 
 .moment.empty  {
@@ -121,18 +122,31 @@ body {
     background-color: #EFEFEF;
 }
 
+.moment.highlight {
+    background-color: lightgreen;
+}
+
 .moment .delete-moment {
     width: 25px;
     position: absolute;
     top: 1px;
     left: 1px;
-    background-color: white;
-    color: #CCCCCC;
     text-align: center;
+    display: none;
+    cursor: pointer;
+}
+
+.moment .highlight-moment {
+    width: 25px;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    text-align: center;
+    cursor: pointer;
     display: none;
 }
 
-.highlight {
+.moment span.highlight {
     background-color: yellow;
 }
 
