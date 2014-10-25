@@ -2,28 +2,35 @@ Parse.initialize("xZLK60kGbq8rWmuqZgcQlC1U2JVS4LbCOo5nmOlR", "ScYAIu0yZ8qUiACyNZ
 
 function loadFlowMenu() {
     window.location.hash = 'menu';
-    $('.view#app').fadeOut(100);
+    $('.view#app').hide();
 
     var Flow = Parse.Object.extend("Flow");
     var query = new Parse.Query(Flow);
     var email = $('#email').text();
 
+    // Find all flows associated with the current username.
     query.equalTo("email", email);
     query.find({
         success: function(data) {
+            // Clear the flow.
             $('#flow-menu').empty();
+            
+            // Add all of the flows to the list.
             for (i = 0; i < data.length; i++) {
                $('#flow-menu').append('<li></li>');
                 $('#flow-menu li:last-child').html(data[i].get('name') + '<a class="delete-flow"></a>');
                 $('#flow-menu li:last-child').data('flowId', data[i].id);
             }
-            $('.view#menu').fadeIn(100);
+            $('.view#menu').show();
+        },
+        error: function(error) {
+            console.log('No connection to server, trying to load from local storage');
         }
     })
 }
 
 function saveNewFlow(newFlowName) {
-    $('.view#menu').fadeOut(100);
+    $('.view#menu').hide();
     var Flow = Parse.Object.extend("Flow");
     var flow = new Flow();
     var email = $('#email').text();
@@ -38,6 +45,9 @@ function saveNewFlow(newFlowName) {
             $('#flow').data('flowId', data.id);
             $('#flow-name').text(newFlowName);
             window.location.hash = 'app';
+        },
+        error: function(error) {
+            console.log('Error saving new flow');
         }
     })
 }
@@ -51,10 +61,16 @@ function saveFlow() {
     // Cycle through each sequence and save the moment information for each.
     for (i = 0; i < sequences.length; i++) {
         var sequence = [];
-        var moments = $(sequences[i]).find('.moment textarea');
+        var moments = $(sequences[i]).find('.moment');
         for (j = 0; j < moments.length; j++) {
-            sequence.push($(moments[j]).val());
-        }
+
+            sequence.push({
+                'content': $(moments[j]).find('textarea').val(),
+                'isHighlighted': $(moments[j]).hasClass('highlight')
+            })
+        };
+        
+        // Save this sequence to the flow.
         flowToSave[i] = sequence;
     }
 
@@ -65,69 +81,98 @@ function saveFlow() {
 
     query.get(flowId, {
         success: function(flow) {
-            // Execute any logic that should take place after the object is saved.
             flow.set( "email",  email);
             flow.set( "flow", JSON.stringify(flowToSave));
             flow.set( "name", name);
             flow.save();
         },
-        error: function(flows, error) {
-            alert('Failed to create new object, with error code: ' + error.message);
+        error: function(flow, error) {
+            console.log('Error saving flow');
         }
     });
 }
 
 function loadFlow() {
-    window.location.hash = 'app';
+    // Hide the menu.
+    $('.view#menu').hide();
 
+    // Get the current saved flow id.
     var flowId = $('#flow').data('flowId');
     var Flow = Parse.Object.extend("Flow");
     var query = new Parse.Query(Flow);
 
     query.get(flowId, {
         success: function(data) {
-            $('.view#menu').fadeOut(100);
-
-            // Check if flow exists.
-            if (data.get('flow') !== '') {
-                var flow = JSON.parse(data.get('flow'));
-
-                // Reset current flow.
-                $('#title h2').text(data.get('name'));
-                $('#flow').empty();
-                // If there was flow information.
-                $('#flow').append(newAddSequence);
-                for (sequence in flow) { 
-                    if (flow.hasOwnProperty(sequence)) {
-                        $('#flow').append(newSequence);
-                        
-                        $('#flow .sequence:last-child').append(newAddMoment);
-                        var moment = flow[sequence];
-                        for (i=0; i < moment.length; i++) {
-                            $('#flow .sequence:last-child').append(newMoment);
-                            $('#flow .sequence:last-child .moment:last-child textarea').val(moment[i]);
-                            if (moment[i] !== '') {
-                                $('#flow .sequence:last-child .moment:last-child textarea').removeClass('empty');
-                            }
-                            $('#flow .sequence:last-child').append(newAddMoment);
-                        }
-                        $('#flow').append(newAddSequence);
-                    }
-                }
-            } else {
-                // If this is a new flow with no content, create a new one.
-                $('#flow').empty();
-                $('#flow').append(newAddSequence);
-                $('#flow').append(newSequence);
-                $('#flow .sequence:last-child').html(newAddMoment + newMoment + newAddMoment);
-                $('#flow').append(newAddSequence);
-            }
-
-            // Show the flow.
-            $('.view#app').fadeIn(100);
+            displayFlow(data);
         },
         error: function(error) {
-            alert("Error: " + error.code + " " + error.message);
+            // If error, try loading from local repository;
+            console.log('Error loading new flow');
         }
     })
+}
+
+function displayFlow(data) {
+    // Check if flow exists.
+    if (data.get('flow') !== '') {
+        // Convert the flow from plain text.
+        var flow = JSON.parse(data.get('flow'));
+
+        // Reset current flow.
+        $('#title h2').text(data.get('name'));
+        $('#flow').empty();
+        
+        $('#flow').append(newAddSequence);
+        
+        // Cycle through each of the sequences in the flow.
+        for (sequence in flow) { 
+            if (flow.hasOwnProperty(sequence)) {
+                $('#flow').append(newSequence);
+
+                // Newest sequence = the last child of the flow.
+                var curSequence = $('#flow .sequence:last-child');
+                
+                // Create a new moment in this flow.
+                $(curSequence).append(newAddMoment);
+                var moments = flow[sequence];
+                
+                $(moments).each(function() {
+                    
+                    $(curSequence).append(newMoment);
+                    var curMoment = $('#flow .sequence:last-child .moment:last-child');
+                    
+                    // Fill this moment's text area with the saved content.
+                    $(curMoment).children('textarea').val(this['content']);
+
+                    // Highlight the moment if necessary.
+                    if (this['isHighlighted'] == true) {
+                        $(curMoment).addClass('highlight');
+                    }
+
+                    // Highlight the content.
+                    if (this['content'] !== '') {
+                        $(curMoment).removeClass('empty');
+                    }
+
+                    // Highlight the text.
+                    highlightText(curMoment);
+                    
+                    // Add another end to the sequence.
+                    $(curSequence).append(newAddMoment);
+                })
+                
+                $('#flow').append(newAddSequence);
+            }
+        }
+    } else {
+        // If this is a new flow with no content, create a new one.
+        $('#flow').empty();
+        $('#flow').append(newAddSequence);
+        $('#flow').append(newSequence);
+        $('#flow .sequence:last-child').html(newAddMoment + newMoment + newAddMoment);
+        $('#flow').append(newAddSequence);
+    }
+
+    // Show the flow.
+    $('.view#app').show();
 }
