@@ -1,4 +1,4 @@
-var newMoment = '<div class="moment" draggable="true"><div class="delete-moment">&times;</div><div class="highlight-moment">&#9679;</div><textarea class="empty" draggable=true></textarea></div>';
+var newMoment = '<div class="moment empty" draggable="true"><div class="delete-moment">&times;</div><div class="highlight-moment">&#9679;</div><textarea draggable=true></textarea></div>';
 // var newMoment = '<div class="moment new" draggable="true"></div>';
 var newAddMoment = '<div class="add-moment"></div>';
 var newSequence = '<div class="sequence" draggable="true"></div>'
@@ -41,10 +41,9 @@ $(function() {
     // })
 
     $(document.body).on('click', '#flow-menu li', function() {
+        window.location.hash = 'app';
         flowId = $(this).data('flowId');
         $('#flow').data('flowId', flowId);
-        $('.view#menu').hide();
-        loadFlow();
     })
 
     $('#back-to-menu').click(function() {
@@ -54,9 +53,7 @@ $(function() {
     $(document.body).on('hover', '.moment', function() {
       $(this).find('.delete-moment').toggle();
       $(this).find('.highlight-moment').toggle();
-       saveFlow();
     });
-
 
     $(document.body).on('click', '.add-moment', function() {
       if ($(this).index == 0) {
@@ -81,7 +78,7 @@ $(function() {
 
     $(document.body).on('click', '.highlight-moment', function() {
         $(this).parents('.moment').toggleClass('highlight');
-        return;
+        saveFlow();
     })
     
     $(document.body).on('click', '.add-sequence', function() {
@@ -104,8 +101,10 @@ $(function() {
     $(document.body).on('blur', 'textarea', function() {
         if ($(this).val() == '') {
           $(this).parents('.moment').addClass('empty');
+        } else {
+            highlightText($(this).parents('.moment'));
         }
-        highlightText(this);
+        
         $(this).parents('.moment').removeClass('focus');
         saveFlow();
     })
@@ -268,8 +267,8 @@ function locationHashChanged() {
     }
 }
 
-function highlightText(textarea) {
-    var moment = $(textarea).parents('.moment');
+function highlightText(moment) {
+    var textarea = $(moment).children('textarea');
     var newLineRegex = /^.*$/gm;
     var questionRegex = /^.*\?$/gm;
     var content = $(textarea).val().match(newLineRegex);
@@ -279,16 +278,24 @@ function highlightText(textarea) {
 
     // Find all of the content in the textarea.
     if (content.length > 0) {
-        for (i=0; i < content.length; i++) {
-            var isQuestion = questionRegex.test(content[i]);
-            if (content[i] != '' &&  isQuestion == true) {
-                $(moment).append('<p><span class="highlight">' + content[i] + '</span></p>');
+        $(content).each(function() {
+            var isQuestion = questionRegex.test(this);
+            if (this != '' &&  isQuestion == true) {
+                $(moment).append('<p><span class="highlight">' + this + '</span></p>');
             } else {
-                $(moment).append('<p>' + content[i] + '</p>');
+                $(moment).append('<p>' + this + '</p>');
             }
-        }
+        })
     }
 
     // Hide the editable content.
     $(textarea).hide();
+}
+
+function animateIn() {
+    $(this).animate({opacity: 1}, 1000);
+}
+
+function animateOut() {
+    $(this).animate({opacity: 0}, 1000);
 }
