@@ -8,6 +8,7 @@ body {
 .view#menu,
 .view#app {
     display: none;
+    text-align: center;
 }
 
 #flow {
@@ -16,16 +17,20 @@ body {
     white-space: nowrap;
     padding: 50px;
     float: left;
-    padding: 120px 0 100px 50px;
+    padding: 80px 0 100px 50px;
     box-sizing: border-box;
 }
 
-#title, #menu {
+#title {
+    z-index: 1;
+}
+
+#menu, #title {
     position: fixed;
-    padding: 20px 0 0 100px;
-    text-transform: uppercase;
+    padding: 20px 0 0;
     background-color: #FFFFFF;
     width: 100%;
+    text-transform: uppercase;
 }
 
 #title #back-to-menu,
@@ -155,8 +160,12 @@ body {
     display: none;
 }
 
-.moment span.highlight {
+.moment span.highlight-question {
     background-color: yellow;
+}
+
+.moment span.highlight-action {
+    background-color: lightgreen;
 }
 
 .add-moment {
