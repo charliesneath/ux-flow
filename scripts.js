@@ -86,9 +86,11 @@ $(function() {
     })
 
     $(document.body).on('click', '.delete-sequence', function() {
-        $(this).parents('.sequence').next().remove();
-        $(this).parents('.sequence').remove();
-        saveFlow();
+        if ($('.sequence').length > 1) {
+            $(this).parents('.sequence').next().remove();
+            $(this).parents('.sequence').remove();
+            saveFlow();
+        }
     })
 
     $(document.body).on('focus', 'textarea.empty', function() {
