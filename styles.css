@@ -19,6 +19,7 @@ body {
     float: left;
     padding: 80px 0 100px 50px;
     box-sizing: border-box;
+    text-align:left;
 }
 
 #title {

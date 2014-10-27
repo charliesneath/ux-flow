@@ -69,10 +69,7 @@ $(function() {
             // Remove add moment.
             $(this).parents('.moment').prev().remove();
             $(this).parents('.moment').remove();
-        } else {
-            $(this).parents('.sequence').next().remove();
-            $(this).parents('.sequence').remove();
-        }
+        } 
         saveFlow();
     })
 
