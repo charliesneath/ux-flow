@@ -102,6 +102,7 @@ $(function() {
         if ($(this).val() == '') {
           $(this).parents('.moment').addClass('empty');
         } else {
+            $(this).parents('.moment').removeClass('empty');
             highlightText($(this).parents('.moment'));
         }
         
@@ -273,14 +274,19 @@ function highlightText(moment) {
     var questionRegex = /^.*\?$/gm;
     var content = $(textarea).val().match(newLineRegex);
 
-    // Reset the content in the div
+    // Reset the content in the div.
     $(moment).find('p').remove();
 
     // Find all of the content in the textarea.
     if (content.length > 0) {
-        $(content).each(function() {
+        $(content).each(function(index) {
+            
+
             var isQuestion = questionRegex.test(this);
-            if (this != '' &&  isQuestion == true) {
+            if (index == 0) {
+                // Bold and capitalize the first line in a moment.
+                $(moment).append('<p><strong>' + this.toUpperCase() + '</strong></p>');
+            } else if (this != '' &&  isQuestion == true) {
                 $(moment).append('<p><span class="highlight">' + this + '</span></p>');
             } else {
                 $(moment).append('<p>' + this + '</p>');
