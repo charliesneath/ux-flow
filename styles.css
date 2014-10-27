@@ -63,7 +63,16 @@ body {
 
 .sequence {
     /* Remove the white space */
-    font-size: 0;
+    /*font-size: 0;*/
+    position: relative;
+}
+
+.delete-sequence {
+    font-size: 16px;
+    position: absolute;
+    left: -30px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
 .moment textarea {

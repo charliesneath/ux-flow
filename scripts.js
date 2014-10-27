@@ -1,7 +1,7 @@
 var newMoment = '<div class="moment empty" draggable="true"><div class="delete-moment">&times;</div><div class="highlight-moment">&#9679;</div><textarea draggable=true></textarea></div>';
 // var newMoment = '<div class="moment new" draggable="true"></div>';
 var newAddMoment = '<div class="add-moment"></div>';
-var newSequence = '<div class="sequence" draggable="true"></div>'
+var newSequence = '<div class="sequence" draggable="true"><div class="delete-sequence">&times;</div></div>'
 var newAddSequence = '<div class="add-sequence"></div>'
 var draggedElement = null;
 var draggedSequence = null;
@@ -83,6 +83,12 @@ $(function() {
     
     $(document.body).on('click', '.add-sequence', function() {
         addNewSequence($(this).index());
+    })
+
+    $(document.body).on('click', '.delete-sequence', function() {
+        $(this).parents('.sequence').next().remove();
+        $(this).parents('.sequence').remove();
+        saveFlow();
     })
 
     $(document.body).on('focus', 'textarea.empty', function() {
