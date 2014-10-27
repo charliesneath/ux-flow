@@ -292,8 +292,10 @@ function highlightText(moment) {
             if (index == 0) {
                 // Bold and capitalize the first line in a moment.
                 $(moment).append('<p><strong>' + this.toUpperCase() + '</strong></p>');
+            } else if (this.indexOf('>') == 0) {
+                $(moment).append('<p><span class="highlight-action">' + this + '</span></p>');
             } else if (this != '' &&  isQuestion == true) {
-                $(moment).append('<p><span class="highlight">' + this + '</span></p>');
+                $(moment).append('<p><span class="highlight-question">' + this + '</span></p>');
             } else {
                 $(moment).append('<p>' + this + '</p>');
             }
