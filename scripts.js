@@ -1,5 +1,4 @@
 var newMoment = '<div class="moment empty" draggable="true"><div class="delete-moment">&times;</div><div class="highlight-moment">&#9679;</div><textarea draggable=true></textarea></div>';
-// var newMoment = '<div class="moment new" draggable="true"></div>';
 var newAddMoment = '<div class="add-moment"></div>';
 var newSequence = '<div class="sequence" draggable="true"><div class="delete-sequence">&times;</div></div>'
 var newAddSequence = '<div class="add-sequence"></div>'
@@ -69,7 +68,7 @@ $(function() {
             // Remove add moment.
             $(this).parents('.moment').prev().remove();
             $(this).parents('.moment').remove();
-        } 
+        }
         saveFlow();
     })
 
@@ -77,7 +76,7 @@ $(function() {
         $(this).parents('.moment').toggleClass('highlight');
         saveFlow();
     })
-    
+
     $(document.body).on('click', '.add-sequence', function() {
         addNewSequence($(this).index());
     })
@@ -110,7 +109,7 @@ $(function() {
             $(this).parents('.moment').removeClass('empty');
             highlightText($(this).parents('.moment'));
         }
-        
+
         $(this).parents('.moment').removeClass('focus');
         saveFlow();
     })
@@ -120,39 +119,38 @@ $(function() {
             $(':focus').blur();
         }
     });
-    
+
     // MOMENT DRAG
 
-    $(document.body).on('dragstart', '.moment textarea', function(e) {
-
+    $(document.body).on('dragstart', '.moment', function(e) {
         $(this).removeClass('dragenter');
 
         draggedElement = this;
         e.originalEvent.dataTransfer.effectAllowed = 'move';
-        e.originalEvent.dataTransfer.setData('text/plain', this.value);
+        e.originalEvent.dataTransfer.setData('text/plain', this.innerHTML);
     })
 
-    $(document.body).on('dragleave', '.moment textarea', function(e) {
+    $(document.body).on('dragleave', '.moment', function(e) {
         $(this).removeClass('dragenter');
     })
 
-    $(document.body).on('dragenter', '.moment textarea', function(e) {
+    $(document.body).on('dragenter', '.moment', function(e) {
         $(this).addClass('dragenter');
         // Necessary to allow for a drop
         e.originalEvent.preventDefault();
     })
 
-    $(document.body).on('dragover', '.moment textarea', function(e) {
+    $(document.body).on('dragover', '.moment', function(e) {
         // Necessary to allow for a drop
         e.originalEvent.preventDefault();
-    })  
+    })
 
-    $(document.body).on('dragend', '.moment textarea', function(e) {
+    $(document.body).on('dragend', '.moment', function(e) {
         // Necessary to allow for a drop
         $(this).removeClass('dragenter');
-    })  
+    })
 
-    $(document.body).on('drop', '.moment textarea', function(e) {
+    $(document.body).on('drop', '.moment', function(e) {
         var dropLocation = this;
 
         $(dropLocation).removeClass('dragenter');
@@ -160,11 +158,11 @@ $(function() {
         // Don't do anything if dropping the same column we're dragging.
         if (draggedElement != dropLocation && dropLocation.value != '') {
           // Set the source column's HTML to the HTML of the column we dropped on.
-          draggedElement.value = dropLocation.value;
-          this.value = e.originalEvent.dataTransfer.getData('text/plain');
-        } else if (dropLocation.value == '') {
-          draggedElement.value = '';
-          dropLocation.value = e.originalEvent.dataTransfer.getData('text/plain');      
+          draggedElement.innerHTML = dropLocation.innerHTML;
+          this.innerHTML = e.originalEvent.dataTransfer.getData('text/plain');
+        } else if (dropLocation.innerHTML == '') {
+          draggedElement.innerHTML = '';
+          dropLocation.innerHTML = e.originalEvent.dataTransfer.getData('text/plain');
         }
 
         if ($(draggedElement).hasClass('empty') && !$(dropLocation).hasClass('empty')) {
@@ -205,11 +203,11 @@ $(function() {
         // Necessary to allow for a drop
         $(this).removeClass('delete-enter');
     })
-    
+
     $(document.body).on('dragover', '#delete-moment', function(e) {
         // Necessary to allow for a drop
         e.originalEvent.preventDefault();
-    })  
+    })
 
     $(document.body).on('drop', '#delete-moment', function(e) {
         // if ($(draggedSequence !== null)) {
@@ -285,7 +283,7 @@ function highlightText(moment) {
     // Find all of the content in the textarea.
     if (content.length > 0) {
         $(content).each(function(index) {
-            
+
 
             var isQuestion = questionRegex.test(this);
             if (index == 0) {
