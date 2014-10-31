@@ -28,17 +28,6 @@ $(function() {
         }
     })
 
-    // $(document.body).on('hover', '#flow-menu li', function() {
-    //     $(this).find('.delete-flow').toggle();
-    // })
-
-    // $(document.body).on('click', '.delete-flow', function() {
-    //     var deleteFlow = confirm('Delete flow "' + $(this).parent('li').text() + '" ?');
-    //     if (deleteFlow !== null) {
-    //         deleteFlow();
-    //     }
-    // })
-
     $(document.body).on('click', '#flow-menu li', function() {
         window.location.hash = 'app';
         flowId = $(this).data('flowId');
@@ -125,9 +114,10 @@ $(function() {
     $(document.body).on('dragstart', '.moment', function(e) {
         $(this).removeClass('dragenter');
 
+        // draggedElement is global variable
         draggedElement = this;
         e.originalEvent.dataTransfer.effectAllowed = 'move';
-        e.originalEvent.dataTransfer.setData('text/plain', this.innerHTML);
+        e.originalEvent.dataTransfer.setData('text/plain', $(draggedElement).children('textarea').val());
     })
 
     $(document.body).on('dragleave', '.moment', function(e) {
@@ -152,82 +142,37 @@ $(function() {
 
     $(document.body).on('drop', '.moment', function(e) {
         var dropLocation = this;
+        var draggedContent = $(draggedElement).children('textarea');
+        var dropContent = $(dropLocation).children('textarea');
 
         $(dropLocation).removeClass('dragenter');
 
+        // Change the content in the dragged and dropped moments.
         // Don't do anything if dropping the same column we're dragging.
-        if (draggedElement != dropLocation && dropLocation.value != '') {
-          // Set the source column's HTML to the HTML of the column we dropped on.
-          draggedElement.innerHTML = dropLocation.innerHTML;
-          this.innerHTML = e.originalEvent.dataTransfer.getData('text/plain');
-        } else if (dropLocation.innerHTML == '') {
-          draggedElement.innerHTML = '';
-          dropLocation.innerHTML = e.originalEvent.dataTransfer.getData('text/plain');
-        }
+        if (draggedElement != dropLocation && $(dropContent).val() != '') {
+            // Set the source column's HTML to the HTML of the column we dropped on.
+            $(draggedContent).val( $(dropContent).val() );
+            $(dropContent).val( e.originalEvent.dataTransfer.getData('text/plain') );
 
+        } else if ($(dropLocation).val() == '') {
+            // Dop location is empty.
+            $(draggedContent).val('');
+            $(dropContent).val( e.originalEvent.dataTransfer.getData('text/plain') );
+        }
+        
         if ($(draggedElement).hasClass('empty') && !$(dropLocation).hasClass('empty')) {
-          $(dropLocation).addClass('empty');
-          $(draggedElement).removeClass('empty');
+            $(dropLocation).addClass('empty');
+            $(draggedElement).removeClass('empty');
+        } else if ($(dropLocation).hasClass('empty') && !$(draggedElement).hasClass('empty')) {
+            $(draggedElement).addClass('empty');
+            $(dropLocation).removeClass('empty');
         }
 
-         if ($(dropLocation).hasClass('empty') && !$(draggedElement).hasClass('empty')) {
-          $(dropLocation).removeClass('empty');
-          $(draggedElement).addClass('empty');
-        }
+        highlightText(draggedElement);
+        highlightText(dropLocation);
+        saveFlow();
 
         e.originalEvent.stopPropagation();
-        saveFlow();
-    })
-
-    // MOVE SEQUENCE
-
-    // $(document.body).on('dragstart', '.sequence', function(e) {
-    //     $(this).removeClass('dragenter');
-    //     draggedSequence = this;
-    //     e.originalEvent.dataTransfer.effectAllowed = 'move';
-    // })
-
-    // DELETE MOMENT
-
-    $(document.body).on('dragenter', '#delete-moment', function(e) {
-        // Necessary to allow for a drop
-        $(this).addClass('delete-enter');
-        e.originalEvent.preventDefault();
-    })
-
-    $(document.body).on('dragleave', '#delete-moment', function(e) {
-        $(this).removeClass('delete-enter');
-    })
-
-    $(document.body).on('dragend', '#delete-moment', function(e) {
-        // Necessary to allow for a drop
-        $(this).removeClass('delete-enter');
-    })
-
-    $(document.body).on('dragover', '#delete-moment', function(e) {
-        // Necessary to allow for a drop
-        e.originalEvent.preventDefault();
-    })
-
-    $(document.body).on('drop', '#delete-moment', function(e) {
-        // if ($(draggedSequence !== null)) {
-        //     // Make sure this isn't the last sequence on the page.
-        //     if ($('.sequence').length > 1 ) {
-        //         $(draggedSequence).prev('.add-sequence').remove();
-        //         $(draggedSequence).remove();
-        //     }
-
-        //     // Reset dragged sequence.
-        //     draggedSequence = null;
-        // } else {
-            $(draggedElement).parents('.moment').next('.add-moment').remove();
-            $(draggedElement).parents('.moment').remove();
-            draggedElement = null;
-        // }
-
-        $(this).removeClass('delete-enter');
-        e.originalEvent.stopPropagation();
-        saveFlow();
     })
 })
 
