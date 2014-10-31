@@ -52,20 +52,6 @@ $(function() {
        saveFlow();
     });
 
-    $(document.body).on('click', '.delete-moment', function() {
-        if ($(this).parents('.sequence').find('.moment').length > 1) {
-            // Remove add moment.
-            $(this).parents('.moment').prev().remove();
-            $(this).parents('.moment').remove();
-        }
-        saveFlow();
-    })
-
-    $(document.body).on('click', '.highlight-moment', function() {
-        $(this).parents('.moment').toggleClass('highlight');
-        saveFlow();
-    })
-
     $(document.body).on('click', '.add-sequence', function() {
         addNewSequence($(this).index());
     })
@@ -83,12 +69,21 @@ $(function() {
     })
 
     $(document.body).on('click', '.moment', function(e) {
-        if (e.target == this) {
+        if ($(e.target).hasClass('highlight-moment')) {
+            $(this).toggleClass('highlight');
+        } else if ($(e.target).hasClass('delete-moment')) {
+            if ($(this).parents('.sequence').find('.moment').length > 1) {
+                // Remove add moment.
+                $(this).prev().remove();
+                $(this).remove();
+            }
+        } else {
             $(this).find('p').hide();
             $(this).find('textarea').show();
             $(this).find('textarea').focus();
             $(this).addClass('focus');
         }
+        saveFlow();
     })
 
     $(document.body).on('blur', 'textarea', function() {
