@@ -1,7 +1,4 @@
-var newMoment = '<div class="moment empty" draggable="true"><div class="delete-moment">&times;</div><div class="highlight-moment">&#9679;</div><textarea draggable=true></textarea></div>';
-var newAddMoment = '<div class="add-moment"></div>';
-var newSequence = '<div class="sequence" draggable="true"><div class="delete-sequence">&times;</div></div>'
-var newAddSequence = '<div class="add-sequence"></div>'
+var blockSizeIncrement = 80;
 var draggedElement = null;
 var draggedSequence = null;
 var elementToDelete = null;
@@ -38,9 +35,9 @@ $(function() {
         window.location.hash = 'menu';
     })
 
-    $(document.body).on('hover', '.moment', function() {
+    $(document.body).on('hover', '.block', function() {
       $(this).find('.delete-moment').toggle();
-      $(this).find('.highlight-moment').toggle();
+      $(this).find('.change-size').toggle();
     });
 
     $(document.body).on('click', '.add-moment', function() {
@@ -50,6 +47,15 @@ $(function() {
          $(this).after(newAddMoment).after(newMoment);
        }
        saveFlow();
+    });
+
+    // Add new block
+    $(document.body).on('click', '.add-block', function() {
+        $(this).after(newAddBlock).after(newBlock);
+        var moment = $(this).parent('.moment')[0].children;
+        var newBlockIndex = $(this).index() + 1;
+        $(moment[newBlockIndex]).data('height', '2');
+        saveFlow();
     });
 
     $(document.body).on('click', '.add-sequence', function() {
@@ -68,16 +74,26 @@ $(function() {
         $(this).removeClass('empty');
     })
 
-    $(document.body).on('click', '.moment', function(e) {
-        if ($(e.target).hasClass('highlight-moment')) {
-            $(this).toggleClass('highlight');
+    // Handle clicking on a moment.
+    $(document.body).on('click', '.block', function(e) {
+        if ($(e.target).hasClass('bigger')) {
+            var currentHeight = $(this).data(height);
+            $(this).height(currentHeight + blockSizeIncrement);
+        } else if ($(e.target).hasClass('smaller')) {
+            var currentHeight = $(this).height();
+            // Check if the moment is at the smallest size.
+            if (currentHeight >= blockSizeIncrement) {
+                $(this).height(currentHeight - blockSizeIncrement);
+            }
         } else if ($(e.target).hasClass('delete-moment')) {
-            if ($(this).parents('.sequence').find('.moment').length > 1) {
+            // Remove moment, as long as it's not the last in the whole flow.
+            if ($(this).parents('.sequence').find('.block').length > 1) {
                 // Remove add moment.
                 $(this).prev().remove();
                 $(this).remove();
             }
         } else {
+            // Otherwise, just show the editable text.
             $(this).find('p').hide();
             $(this).find('textarea').show();
             $(this).find('textarea').focus();
@@ -91,13 +107,14 @@ $(function() {
           $(this).parents('.moment').addClass('empty');
         } else {
             $(this).parents('.moment').removeClass('empty');
-            highlightText($(this).parents('.moment'));
+            // TODO highlightText($(this).parents('.moment'));
         }
 
         $(this).parents('.moment').removeClass('focus');
         saveFlow();
-    })
+    });
 
+    // ESC key closes edit mode.
     $(document).keyup(function(e) {
         if (e.keyCode == 27) {
             $(':focus').blur();
@@ -241,12 +258,4 @@ function highlightText(moment) {
 
     // Hide the editable content.
     $(textarea).hide();
-}
-
-function animateIn() {
-    $(this).animate({opacity: 1}, 1000);
-}
-
-function animateOut() {
-    $(this).animate({opacity: 0}, 1000);
 }

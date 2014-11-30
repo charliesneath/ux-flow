@@ -35,7 +35,7 @@ function saveNewFlow(newFlowName) {
 
     flow.set('email', email);
     flow.set('name', newFlowName);
-    flow.set('flow', '');
+    flow.set('sequences', '');
     flow.save(null, {
         success: function(data) {
             $('#flow-menu').append('<li></li>');
@@ -58,18 +58,36 @@ function saveFlow() {
 
     // Cycle through each sequence and save the moment information for each.
     for (i = 0; i < sequences.length; i++) {
-        var sequence = [];
-        var moments = $(sequences[i]).find('.moment');
-        for (j = 0; j < moments.length; j++) {
 
-            sequence.push({
-                'content': $(moments[j]).find('textarea').val(),
-                'isHighlighted': $(moments[j]).hasClass('highlight')
-            })
+        var sequenceToSave = [];
+        var moments = $(sequences[i]).find('.moment');
+
+        for (j = 0; j < moments.length; j++) {
+            // A collection of blocks.
+            var momentsToSave = [];
+            // The block in this moment
+            var blocks = $(moments[j]).find('.block'); 
+            
+            // Cycle through the blocks in this moment.
+            for (k = 0; k < blocks.length; k++) {
+                var curBlock = {};
+                curBlock['content'] = $(blocks[k]).find('textarea').val();
+                
+                if ($(blocks[k]).data('height')) {
+                    curBlock['height'] = $(blocks[k]).data('height');
+                } else {
+                    curBlock['height'] = '2';
+                }
+                                // Add this block to this moment
+                momentsToSave.push(curBlock);
+            }
+
+            // Add this list of moments to the sequence
+            sequenceToSave[j] = momentsToSave;
         };
         
         // Save this sequence to the flow.
-        flowToSave[i] = sequence;
+        flowToSave[i] = sequenceToSave;
     }
 
     var Flow = Parse.Object.extend("Flow");
@@ -79,9 +97,9 @@ function saveFlow() {
 
     query.get(flowId, {
         success: function(flow) {
-            flow.set( "email",  email);
-            flow.set( "flow", JSON.stringify(flowToSave));
-            flow.set( "name", name);
+            flow.set("email",  email);
+            flow.set("sequences", JSON.stringify(flowToSave));
+            flow.set("name", name);
             flow.save();
         },
         error: function(flow, error) {
@@ -112,63 +130,69 @@ function loadFlow() {
 
 function displayFlow(data) {
     // Check if flow exists.
-    if (data.get('flow') !== '') {
+    if (data.get('sequences') !== '') {
         // Convert the flow from plain text.
-        var flow = JSON.parse(data.get('flow'));
+        var sequencesToBuild = JSON.parse(data.get('sequences'));
 
         // Reset current flow.
         $('#title h2').text(data.get('name'));
-        $('#flow').empty();
+        $('#sequences').empty();
+        $('#sequences').append(newAddSequence);
         
-        $('#flow').append(newAddSequence);
-        
-        // Cycle through each of the sequences in the flow.
-        for (sequence in flow) { 
-            if (flow.hasOwnProperty(sequence)) {
-                $('#flow').append(newSequence);
-
-                // Newest sequence = the last child of the flow.
-                var curSequence = $('#flow .sequence:last-child');
-                
-                // Create a new moment in this flow.
-                $(curSequence).append(newAddMoment);
-                var moments = flow[sequence];
-                
-                $(moments).each(function() {
-                    
-                    $(curSequence).append(newMoment);
-                    var curMoment = $('#flow .sequence:last-child .moment:last-child');
-                    
-                    // Fill this moment's text area with the saved content.
-                    $(curMoment).children('textarea').val(this['content']);
-
-                    // Highlight the moment if necessary.
-                    if (this['isHighlighted'] == true) {
-                        $(curMoment).addClass('highlight');
-                    }
-
-                    // Highlight the content.
-                    if (this['content'] !== '') {
-                        $(curMoment).removeClass('empty');
-                    }
-
-                    // Highlight the text.
-                    highlightText(curMoment);
-                    
-                    // Add another end to the sequence.
-                    $(curSequence).append(newAddMoment);
-                })
-                
-                $('#flow').append(newAddSequence);
-            }
+        //Add sequences to the page.
+        var numSequences = Object.keys(sequencesToBuild).length;
+        for (var i = 0; i < numSequences; i++) {
+            $('#sequences').append(newSequence);
         }
+        // Create object of all sequences added to the page.
+        var sequences = $('.sequence');
+
+        // Add moments to each sequence.
+        $.each(sequencesToBuild, function(sequenceKey, momentsToBuild) {
+            // How many moments in this sequence?
+            var numMoments = Object.keys(momentsToBuild).length;
+            alert(numMoments.length);
+            for (var j = 0; j < numMoments; j++) {
+                if (j == 0) {
+                    $(sequences[sequenceKey]).append(newAddMoment);
+                }
+                // Use the sequences on the page along with sequenceKey variable to append moment.
+                alert(newMoment);
+                $(sequences[sequenceKey]).append(newMoment);
+            }
+
+            // Create object of moments in the current sequence.
+            var moments = $(sequences[sequenceKey]).find('.moment');
+
+            // Add blocks to the current moment on the page.
+            $.each(momentsToBuild, function(momentKey, blocksToBuild) {
+                var numBlocks = Object.keys(blocksToBuild).length;
+                for (var k = 0; k < numBlocks; k++) {
+                    $(moments[momentKey]).append(newBlock);
+                }
+
+                // Create object of each block in the current moment.
+                var blocks = $(moments[momentKey]).find('.block');
+
+                $.each(blocksToBuild, function(blockKey, block) {
+                    // Block height is in units that are multiplied by the global increment.
+                    //$(blocks[blockKey]).height(blockSizeIncrement * parseInt(block[blockKey]['height']));
+                    //$(blocks[blockKey]).data('height', parseInt(block[blockKey]['height']));
+                    //$(blocks[blockKey]).find('textarea').val(block[blockKey]['content']);
+                })
+            })
+        });
     } else {
+        alert('empty flow');
+
         // If this is a new flow with no content, create a new one.
-        $('#flow').empty();
-        $('#flow').append(newAddSequence);
-        $('#flow').append(newSequence);
-        $('#flow .sequence:last-child').html(newAddMoment + newMoment + newAddMoment);
-        $('#flow').append(newAddSequence);
+        $('#sequences').empty();
+        //$('#sequences').append(newAddSequence);
+        $('#sequences').append(newSequence);
+        $('#sequences .sequence:last-child').html(newAddMoment + newMoment + newAddMoment);
+        var moment = $('.moment');
+        $(moment[0]).html(newBlock);
+        //$('#sequences').append(newAddSequence);
     }
 
     // Show the flow.

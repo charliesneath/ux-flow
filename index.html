@@ -9,8 +9,10 @@
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.3.0.min.js"></script>
   <script src="config.js"></script>
+  <script src="fragments.js"></script>
   <script src="scripts.js"></script>
   <script src="parse.js"></script>
+
 
 </head>
 <body>
@@ -30,10 +32,13 @@
         <div id="flow" class="testing">
             <div class="sequence">
                 <div class="add-moment"></div>
-                <div class="moment"><textarea class="empty" draggable="true"></textarea></div>
+                <div class="moment">
+                    <textarea class="empty" draggable="true"></textarea>
+                    <div class="add-block"></div>
+                </div>
                 <div class="add-moment"></div>
             </div>
-            <div class="add-sequence"></div>
+            <!-- <div class="add-sequence"></div> -->
         </div>
     </div>
   </body>

@@ -17,9 +17,10 @@ body {
     white-space: nowrap;
     padding: 50px;
     float: left;
-    padding: 80px 0 100px 50px;
+    padding: 100px 0 100px 50px;
     box-sizing: border-box;
     text-align:left;
+    margin-top: 10px;
 }
 
 #title {
@@ -79,6 +80,13 @@ body {
     left: -30px;
     font-size: 16px;
     cursor: pointer;
+    display: none;
+}
+
+.moment {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .moment textarea {
@@ -103,21 +111,22 @@ body {
 .add-sequence {
     height: 50px;
     margin: 0 50px;
+    display: none;
 }
 
 .add-sequence:hover {
     background-color: #EFEFEF;
 }
 
-.moment {
+.block {
     margin: 0;
     display: inline-block;
-    width: 250px;
-    height: 250px;
+    width: 252px;
+    height: 252px;
     text-align: center;
     font-size: 11px;
     cursor: move;
-    vertical-align: middle;
+    vertical-align: top;
     position: relative;
     border: 1px solid black;
     box-sizing: border-box;
@@ -180,6 +189,12 @@ body {
     vertical-align: middle;
 }
 
+.add-block {
+    background-color: #999999;
+    height: 25px;
+    width: 100%;
+}
+
 .add-moment:hover {
     background-color: #EFEFEF;
 }
@@ -195,6 +210,17 @@ body {
     bottom: 0;
     border-top: 1px solid #CCCCCC;
     background-color: white;
+}
+
+.change-size {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 25px;
+    display: none;
 }
 
 #delete-moment.delete-enter {
