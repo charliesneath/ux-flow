@@ -193,15 +193,13 @@ function displayFlow(data) {
             })
         });
     } else {
-        alert('empty flow');
-
         // If this is a new flow with no content, create a new one.
         $('#flow').empty();
         //$('#sequences').append(newAddSequence);
         $('#flow').append(newSequence);
-        $('#flow .sequence:last-child').html(newAddMoment + newMoment + newAddMoment);
+        $('#flow .sequence:last-child').append(newAddMoment).append(newMoment).append(newAddMoment);
         var moment = $('.moment');
-        $(moment[0]).html(newAddBlock + newBlock + newAddBlock);
+        $(moment[0]).append(newAddBlock).append($(newBlock).data('height', '1')).append(newAddBlock);
         //$('#sequences').append(newAddSequence); not yet!
     }
 
