@@ -1,8 +1,6 @@
-var newMoment = '<div class="moment empty" draggable="true"><div class="delete-moment">&times;</div><div class="highlight-moment">&#9679;</div><textarea draggable=true></textarea></div>';
-// var newMoment = '<div class="moment new" draggable="true"></div>';
-var newAddMoment = '<div class="add-moment"></div>';
-var newSequence = '<div class="sequence" draggable="true"><div class="delete-sequence">&times;</div></div>'
-var newAddSequence = '<div class="add-sequence"></div>'
+Parse.initialize("biZJpWUnJXDaj2nWgclmbqEL1CbivgnqhFWvcoLu", "A6aALGmVvDvo06q8n6g9V0NlO6s87TcmwK9hXJSP");
+
+var blockSizeIncrement = 80; // 80px height + 10px padding + 10px padding
 var draggedElement = null;
 var draggedSequence = null;
 var elementToDelete = null;
@@ -29,17 +27,6 @@ $(function() {
         }
     })
 
-    // $(document.body).on('hover', '#flow-menu li', function() {
-    //     $(this).find('.delete-flow').toggle();
-    // })
-
-    // $(document.body).on('click', '.delete-flow', function() {
-    //     var deleteFlow = confirm('Delete flow "' + $(this).parent('li').text() + '" ?');
-    //     if (deleteFlow !== null) {
-    //         deleteFlow();
-    //     }
-    // })
-
     $(document.body).on('click', '#flow-menu li', function() {
         window.location.hash = 'app';
         flowId = $(this).data('flowId');
@@ -50,34 +37,29 @@ $(function() {
         window.location.hash = 'menu';
     })
 
-    $(document.body).on('hover', '.moment', function() {
-      $(this).find('.delete-moment').toggle();
-      $(this).find('.highlight-moment').toggle();
+    $(document.body).on('hover', '.block', function() {
+      $(this).find('.block-control').toggle();
     });
 
     $(document.body).on('click', '.add-moment', function() {
-      if ($(this).index == 0) {
-        $('.sequence').prepend(newMoment).prepend(newAddMoment);
-       } else {
-         $(this).after(newAddMoment).after(newMoment);
-       }
-       saveFlow();
+        if ($(this).index == 0) {
+            $('.sequence').prepend(newMoment).prepend(newAddMoment);
+        } else {
+            var moment = document.createElement('div');
+            $(moment).addClass('moment');
+            $(moment).attr('draggable', 'true');
+            $(moment).append(newAddBlock).append($(newBlock).data('height', '1')).append(newAddBlock);
+            $(this).after(newAddMoment).after(moment);
+        }
+        saveFlow();
     });
 
-    $(document.body).on('click', '.delete-moment', function() {
-        if ($(this).parents('.sequence').find('.moment').length > 1) {
-            // Remove add moment.
-            $(this).parents('.moment').prev().remove();
-            $(this).parents('.moment').remove();
-        } 
+    // Add new block
+    $(document.body).on('click', '.add-block', function() {
+        $(this).after(newAddBlock).after($(newBlock).data('height', '1'));
         saveFlow();
-    })
+    });
 
-    $(document.body).on('click', '.highlight-moment', function() {
-        $(this).parents('.moment').toggleClass('highlight');
-        saveFlow();
-    })
-    
     $(document.body).on('click', '.add-sequence', function() {
         addNewSequence($(this).index());
     })
@@ -90,148 +72,143 @@ $(function() {
         }
     })
 
-    $(document.body).on('focus', 'textarea.empty', function() {
-        $(this).removeClass('empty');
-    })
-
-    $(document.body).on('click', '.moment', function(e) {
-        if (e.target == this) {
-            $(this).find('p').hide();
-            $(this).find('textarea').show();
-            $(this).find('textarea').focus();
-            $(this).addClass('focus');
+    $(document.body).on('click', '.change-size', function(e) {
+        var block = $(this).parents('.block');
+        var heightUnits = parseInt($(block).data('height'));
+        if ($(this).hasClass('bigger')) {
+            changeBlockSize(block, heightUnits + 1);
+        } else {
+            if (heightUnits > 1) {
+                changeBlockSize(block, heightUnits - 1);
+            }
         }
-    })
+    });
+
+    $(document.body).on('click', '.hide-block', function(e) {
+        var block = $(this).parents('.block');
+        $(block).toggleClass('hidden');
+    });
+
+    // Handle clicking on a moment.
+    // $(document.body).on('click', '.block', function(e) {
+    //     if ($(e.target).hasClass('bigger')) {
+    //         var heightUnits = parseInt($(this).data('height'));
+    //         changeBlockSize(this, heightUnits + 1);
+    //     } else if ($(e.target).hasClass('smaller')) {
+    //         // Check if the moment is at the smallest size.
+    //         if ($(this).height() > blockSizeIncrement) {
+    //             var heightUnits = parseInt($(this).data('height'));
+    //             changeBlockSize(this, heightUnits - 1);
+    //         }
+    //     } else if ($(e.target).hasClass('delete-block')) {
+    //         // Remove moment, as long as it's not the last in the whole flow.
+    //         if ($(this).parents('.sequence').find('.block').length > 1) {
+    //             // Remove add moment.
+    //             $(this).prev().remove();
+    //             $(this).remove();
+    //         }
+    //     } else {
+    //         // Otherwise, just show the editable text.
+    //         $(this).find('p').hide();
+    //         $(this).find('textarea').show();
+    //         $(this).find('textarea').focus();
+    //         $(this).addClass('focus');
+    //     }
+    //     saveFlow();
+    // })
 
     $(document.body).on('blur', 'textarea', function() {
         if ($(this).val() == '') {
           $(this).parents('.moment').addClass('empty');
         } else {
             $(this).parents('.moment').removeClass('empty');
-            highlightText($(this).parents('.moment'));
+            // TODO highlightText($(this).parents('.moment'));
         }
-        
+
         $(this).parents('.moment').removeClass('focus');
         saveFlow();
-    })
+    });
 
+    // ESC key closes edit mode.
     $(document).keyup(function(e) {
         if (e.keyCode == 27) {
             $(':focus').blur();
         }
     });
-    
+
     // MOMENT DRAG
 
-    $(document.body).on('dragstart', '.moment textarea', function(e) {
-
+    $(document.body).on('dragstart', '.moment', function(e) {
         $(this).removeClass('dragenter');
 
+        // draggedElement is global variable
         draggedElement = this;
         e.originalEvent.dataTransfer.effectAllowed = 'move';
-        e.originalEvent.dataTransfer.setData('text/plain', this.value);
+        e.originalEvent.dataTransfer.setData('text/plain', $(draggedElement).children('textarea').val());
     })
 
-    $(document.body).on('dragleave', '.moment textarea', function(e) {
+    $(document.body).on('dragleave', '.moment', function(e) {
         $(this).removeClass('dragenter');
     })
 
-    $(document.body).on('dragenter', '.moment textarea', function(e) {
+    $(document.body).on('dragenter', '.moment', function(e) {
         $(this).addClass('dragenter');
         // Necessary to allow for a drop
         e.originalEvent.preventDefault();
     })
 
-    $(document.body).on('dragover', '.moment textarea', function(e) {
+    $(document.body).on('dragover', '.moment', function(e) {
         // Necessary to allow for a drop
         e.originalEvent.preventDefault();
-    })  
+    })
 
-    $(document.body).on('dragend', '.moment textarea', function(e) {
+    $(document.body).on('dragend', '.moment', function(e) {
         // Necessary to allow for a drop
         $(this).removeClass('dragenter');
-    })  
+    })
 
-    $(document.body).on('drop', '.moment textarea', function(e) {
+    $(document.body).on('drop', '.moment', function(e) {
         var dropLocation = this;
+        var draggedContent = $(draggedElement).children('textarea');
+        var dropContent = $(dropLocation).children('textarea');
 
         $(dropLocation).removeClass('dragenter');
 
+        // Change the content in the dragged and dropped moments.
         // Don't do anything if dropping the same column we're dragging.
-        if (draggedElement != dropLocation && dropLocation.value != '') {
-          // Set the source column's HTML to the HTML of the column we dropped on.
-          draggedElement.value = dropLocation.value;
-          this.value = e.originalEvent.dataTransfer.getData('text/plain');
-        } else if (dropLocation.value == '') {
-          draggedElement.value = '';
-          dropLocation.value = e.originalEvent.dataTransfer.getData('text/plain');      
-        }
+        if (draggedElement != dropLocation && $(dropContent).val() != '') {
+            // Set the source column's HTML to the HTML of the column we dropped on.
+            $(draggedContent).val( $(dropContent).val() );
+            $(dropContent).val( e.originalEvent.dataTransfer.getData('text/plain') );
 
+        } else if ($(dropLocation).val() == '') {
+            // Dop location is empty.
+            $(draggedContent).val('');
+            $(dropContent).val( e.originalEvent.dataTransfer.getData('text/plain') );
+        }
+        
         if ($(draggedElement).hasClass('empty') && !$(dropLocation).hasClass('empty')) {
-          $(dropLocation).addClass('empty');
-          $(draggedElement).removeClass('empty');
+            $(dropLocation).addClass('empty');
+            $(draggedElement).removeClass('empty');
+        } else if ($(dropLocation).hasClass('empty') && !$(draggedElement).hasClass('empty')) {
+            $(draggedElement).addClass('empty');
+            $(dropLocation).removeClass('empty');
         }
 
-         if ($(dropLocation).hasClass('empty') && !$(draggedElement).hasClass('empty')) {
-          $(dropLocation).removeClass('empty');
-          $(draggedElement).addClass('empty');
-        }
+        highlightText(draggedElement);
+        highlightText(dropLocation);
+        saveFlow();
 
         e.originalEvent.stopPropagation();
-        saveFlow();
-    })
-
-    // MOVE SEQUENCE
-
-    // $(document.body).on('dragstart', '.sequence', function(e) {
-    //     $(this).removeClass('dragenter');
-    //     draggedSequence = this;
-    //     e.originalEvent.dataTransfer.effectAllowed = 'move';
-    // })
-
-    // DELETE MOMENT
-
-    $(document.body).on('dragenter', '#delete-moment', function(e) {
-        // Necessary to allow for a drop
-        $(this).addClass('delete-enter');
-        e.originalEvent.preventDefault();
-    })
-
-    $(document.body).on('dragleave', '#delete-moment', function(e) {
-        $(this).removeClass('delete-enter');
-    })
-
-    $(document.body).on('dragend', '#delete-moment', function(e) {
-        // Necessary to allow for a drop
-        $(this).removeClass('delete-enter');
-    })
-    
-    $(document.body).on('dragover', '#delete-moment', function(e) {
-        // Necessary to allow for a drop
-        e.originalEvent.preventDefault();
-    })  
-
-    $(document.body).on('drop', '#delete-moment', function(e) {
-        // if ($(draggedSequence !== null)) {
-        //     // Make sure this isn't the last sequence on the page.
-        //     if ($('.sequence').length > 1 ) {
-        //         $(draggedSequence).prev('.add-sequence').remove();
-        //         $(draggedSequence).remove();
-        //     }
-
-        //     // Reset dragged sequence.
-        //     draggedSequence = null;
-        // } else {
-            $(draggedElement).parents('.moment').next('.add-moment').remove();
-            $(draggedElement).parents('.moment').remove();
-            draggedElement = null;
-        // }
-
-        $(this).removeClass('delete-enter');
-        e.originalEvent.stopPropagation();
-        saveFlow();
     })
 })
+
+// Receives update heights units variable, depending on if block was made bigger or smaller.
+function changeBlockSize(block, newHeightUnits) {
+   var newHeight = (newHeightUnits * blockSizeIncrement) + ((newHeightUnits - 1) * 20);
+   $(block).height(newHeight);
+   $(block).data('height', newHeightUnits);
+}
 
 function addNewSequence(clickIndex) {
     var flow = $('#flow').children();
@@ -285,7 +262,7 @@ function highlightText(moment) {
     // Find all of the content in the textarea.
     if (content.length > 0) {
         $(content).each(function(index) {
-            
+
 
             var isQuestion = questionRegex.test(this);
             if (index == 0) {
@@ -303,12 +280,4 @@ function highlightText(moment) {
 
     // Hide the editable content.
     $(textarea).hide();
-}
-
-function animateIn() {
-    $(this).animate({opacity: 1}, 1000);
-}
-
-function animateOut() {
-    $(this).animate({opacity: 0}, 1000);
 }

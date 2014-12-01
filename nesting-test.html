@@ -1,0 +1,67 @@
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+<script>
+
+$(function() {
+    $(document.body).on('click', '.new-mini-box', function() {
+        var newMoment = '<div><div class="new-mega-box"></div></div>'
+        $(this).before(newMoment);
+    })
+
+    $(document.body).on('click', '.new-mega-box', function() {
+
+    })
+})
+
+</script>
+
+<style>
+    .moment {
+        overflow: hidden;
+        float: left;
+    }
+
+    .flex-box {
+        display: flex;
+        flex-direction: column;
+        background-color: #CCCCCC;
+        height: 500px;
+        width: 250px;
+        float: left;
+    }
+
+    .flex-box > div {
+        flex: 1;
+        background-color: lightyellow;
+        border: 1px solid #999999;
+        margin: 10px;
+        position: relative;
+    }
+
+    .new-mini-box {
+        background-color: lightblue !important;
+        text-align: center;
+        line-height: 100%;
+    }
+
+    .new-mega-box {
+        background-color: gold;
+        width: 25px;
+        position: absolute;
+        height: 100%;
+        right: 0;
+    }
+</style>
+
+<div class="moment">
+    <div class="flex-box">
+        <div><div class="new-mega-box"></div></div>
+        <div>
+            <div class="flex-box">
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div class="new-mini-box">+</div>
+    </div>
+</div>
