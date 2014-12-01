@@ -6,13 +6,10 @@ var newBlock = '\
             <li class="smaller">-</li>\
         </ul>\
         <textarea draggable=true></textarea>\
-    </div>\
-    <div class="add-block"></div>';
+    </div>';
 
 var newMoment = '\
-    <div class="moment empty" draggable="true">\
-        <div class="add-block"></div>\
-    </div>\
+    <div class="moment empty" draggable="true"></div>\
     <div class="add-moment"></div>';
 
 var newAddMoment = '\

@@ -1,3 +1,5 @@
+Parse.initialize("biZJpWUnJXDaj2nWgclmbqEL1CbivgnqhFWvcoLu", "A6aALGmVvDvo06q8n6g9V0NlO6s87TcmwK9hXJSP");
+
 var blockSizeIncrement = 80;
 var draggedElement = null;
 var draggedSequence = null;
@@ -41,12 +43,16 @@ $(function() {
     });
 
     $(document.body).on('click', '.add-moment', function() {
-      if ($(this).index == 0) {
-        $('.sequence').prepend(newMoment).prepend(newAddMoment);
-       } else {
-         $(this).after(newAddMoment).after(newMoment);
-       }
-       saveFlow();
+        if ($(this).index == 0) {
+            $('.sequence').prepend(newMoment).prepend(newAddMoment);
+        } else {
+            var moment = document.createElement('div');
+            $(moment).addClass('moment');
+            $(moment).attr('draggable', 'true');
+            $(moment).html(newAddBlock + newBlock + newAddBlock);
+            $(this).after(newAddMoment).after(moment);
+        }
+        saveFlow();
     });
 
     // Add new block
@@ -54,7 +60,7 @@ $(function() {
         $(this).after(newAddBlock).after(newBlock);
         var moment = $(this).parent('.moment')[0].children;
         var newBlockIndex = $(this).index() + 1;
-        $(moment[newBlockIndex]).data('height', '2');
+        $(moment[newBlockIndex]).data('height', '1');
         saveFlow();
     });
 
@@ -70,20 +76,19 @@ $(function() {
         }
     })
 
-    $(document.body).on('focus', 'textarea.empty', function() {
-        $(this).removeClass('empty');
-    })
-
     // Handle clicking on a moment.
     $(document.body).on('click', '.block', function(e) {
         if ($(e.target).hasClass('bigger')) {
-            var currentHeight = $(this).data(height);
-            $(this).height(currentHeight + blockSizeIncrement);
+            // Include height of new block element
+            var newHeight = $(this).height() + blockSizeIncrement + 20;
+            $(this).height(newHeight);
+            $(this).data('height', $(this).data('height') + 1);
         } else if ($(e.target).hasClass('smaller')) {
-            var currentHeight = $(this).height();
             // Check if the moment is at the smallest size.
-            if (currentHeight >= blockSizeIncrement) {
-                $(this).height(currentHeight - blockSizeIncrement);
+            if ($(this).height() >= blockSizeIncrement) {
+                var newHeight = $(this).height() - blockSizeIncrement - 20;
+                $(this).height(newHeight);
+                $(this).data('height', $(this).data('height') - 1);
             }
         } else if ($(e.target).hasClass('delete-moment')) {
             // Remove moment, as long as it's not the last in the whole flow.

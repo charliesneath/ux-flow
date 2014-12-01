@@ -1,6 +1,5 @@
 body {
     font-family: 'Lucida Grande', 'sans-serif';
-    font-size: 12px;
     padding: 0;
     margin: 0;
 }
@@ -16,11 +15,14 @@ body {
     overflow-y: scroll;
     white-space: nowrap;
     padding: 50px;
-    float: left;
-    padding: 100px 0 100px 50px;
+    /*float: left;*/
+    padding: 100px 0 0 50px;
     box-sizing: border-box;
     text-align:left;
-    margin-top: 10px;
+    /*margin-top: 10px;*/
+    position: absolute;
+    height: 100%;
+    width: 100%;
 }
 
 #title {
@@ -70,8 +72,9 @@ body {
 
 .sequence {
     /* Remove the white space */
-    /*font-size: 0;*/
+    font-size: 0;
     position: relative;
+    height: 100%;
 }
 
 .delete-sequence {
@@ -94,7 +97,6 @@ body {
     width: 100%;
     outline: none;
     resize: none;
-    padding: 1em;
     text-align: center;
     border: none;
     vertical-align: middle;
@@ -102,6 +104,7 @@ body {
     border: none;
     box-sizing: border-box;
     line-height: 1em;
+    padding: 0;
 }
 
 .moment.dragenter {
@@ -121,25 +124,18 @@ body {
 .block {
     margin: 0;
     display: inline-block;
-    width: 252px;
-    height: 252px;
+    width: 220px;
+    height: 80px;
     text-align: center;
     font-size: 11px;
     cursor: move;
     vertical-align: top;
     position: relative;
     border: 1px solid black;
-    box-sizing: border-box;
+    /*box-sizing: border-box;*/
     white-space: normal;
     padding: 1em;
-}
-
-.moment.empty  {
-    border: 1px solid #EFEFEF;
-}
-
-.moment.focus  {
-    
+    box-sizing: border-box;
 }
 
 .moment.new {
@@ -181,17 +177,18 @@ body {
 .add-moment {
     color: #CCCCCC;
     display: inline-block;
-    height: 250px;
+    height: 100%;
     width: 50px;
     text-align: center;
     line-height: 250px;
     font-size: 16px;
     vertical-align: middle;
+    background-color: lightgreen;
 }
 
 .add-block {
     background-color: #999999;
-    height: 25px;
+    height: 20px;
     width: 100%;
 }
 

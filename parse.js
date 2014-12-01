@@ -1,3 +1,4 @@
+
 function loadFlowMenu() {
     window.location.hash = 'menu';
     $('.view#app').hide();
@@ -129,20 +130,22 @@ function loadFlow() {
 }
 
 function displayFlow(data) {
+    // Set name of new flow
+    $('#flow-name').text(data.get('name'));
+
+    // Reset current flow.
+    $('#flow').empty();
+    $('#flow').append(newAddSequence);
+            
     // Check if flow exists.
     if (data.get('sequences') !== '') {
         // Convert the flow from plain text.
         var sequencesToBuild = JSON.parse(data.get('sequences'));
 
-        // Reset current flow.
-        $('#title h2').text(data.get('name'));
-        $('#sequences').empty();
-        $('#sequences').append(newAddSequence);
-        
-        //Add sequences to the page.
+        // Add sequences to the page
         var numSequences = Object.keys(sequencesToBuild).length;
         for (var i = 0; i < numSequences; i++) {
-            $('#sequences').append(newSequence);
+            $('#flow').append(newSequence);
         }
         // Create object of all sequences added to the page.
         var sequences = $('.sequence');
@@ -151,13 +154,11 @@ function displayFlow(data) {
         $.each(sequencesToBuild, function(sequenceKey, momentsToBuild) {
             // How many moments in this sequence?
             var numMoments = Object.keys(momentsToBuild).length;
-            alert(numMoments.length);
             for (var j = 0; j < numMoments; j++) {
                 if (j == 0) {
                     $(sequences[sequenceKey]).append(newAddMoment);
                 }
                 // Use the sequences on the page along with sequenceKey variable to append moment.
-                alert(newMoment);
                 $(sequences[sequenceKey]).append(newMoment);
             }
 
@@ -167,18 +168,28 @@ function displayFlow(data) {
             // Add blocks to the current moment on the page.
             $.each(momentsToBuild, function(momentKey, blocksToBuild) {
                 var numBlocks = Object.keys(blocksToBuild).length;
+
+                $(moments[momentKey]).append(newAddBlock);
                 for (var k = 0; k < numBlocks; k++) {
                     $(moments[momentKey]).append(newBlock);
+                    $(moments[momentKey]).append(newAddBlock);
                 }
 
                 // Create object of each block in the current moment.
                 var blocks = $(moments[momentKey]).find('.block');
 
+                // Modify the blocks that have already been added to the page.
                 $.each(blocksToBuild, function(blockKey, block) {
                     // Block height is in units that are multiplied by the global increment.
-                    //$(blocks[blockKey]).height(blockSizeIncrement * parseInt(block[blockKey]['height']));
-                    //$(blocks[blockKey]).data('height', parseInt(block[blockKey]['height']));
-                    //$(blocks[blockKey]).find('textarea').val(block[blockKey]['content']);
+                    // Size of new block element has to be included as well.
+                    var newBlockButtonHeight = 20;
+                    var heightUnits = parseInt(block['height']);
+                    var newHeight = (blockSizeIncrement * heightUnits) + (newBlockButtonHeight * (heightUnits - 1));
+                    
+                    $(blocks[blockKey]).height(newHeight);
+                    $(blocks[blockKey]).data('height', heightUnits);
+                    $(blocks[blockKey]).find('textarea').val(heightUnits + ', ' + newHeight);
+                    // $(blocks[blockKey]).find('textarea').val(block['content']);
                 })
             })
         });
@@ -186,13 +197,13 @@ function displayFlow(data) {
         alert('empty flow');
 
         // If this is a new flow with no content, create a new one.
-        $('#sequences').empty();
+        $('#flow').empty();
         //$('#sequences').append(newAddSequence);
-        $('#sequences').append(newSequence);
-        $('#sequences .sequence:last-child').html(newAddMoment + newMoment + newAddMoment);
+        $('#flow').append(newSequence);
+        $('#flow .sequence:last-child').html(newAddMoment + newMoment + newAddMoment);
         var moment = $('.moment');
-        $(moment[0]).html(newBlock);
-        //$('#sequences').append(newAddSequence);
+        $(moment[0]).html(newAddBlock + newBlock + newAddBlock);
+        //$('#sequences').append(newAddSequence); not yet!
     }
 
     // Show the flow.
