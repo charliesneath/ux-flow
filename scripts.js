@@ -72,7 +72,7 @@ $(function() {
         }
     })
 
-    $(document.body).on('click', '.change-size', function(e) {
+    $(document.body).on('click', '.change-size', function() {
         var block = $(this).parents('.block');
         var heightUnits = parseInt($(block).data('height'));
         if ($(this).hasClass('bigger')) {
@@ -88,6 +88,16 @@ $(function() {
         var block = $(this).parents('.block');
         $(block).toggleClass('hidden');
     });
+
+    $(document.body).on('click', '.delete-block', function(e) {
+        if ($(this).parents('.moment').find('.block').length > 1) {
+            $(this).parents('.block').prev().remove();
+            $(this).parents('.block').remove();
+        } else if ($(this).parents('.moment').find('.block').length == 1) {
+            $(this).parents('.moment').prev().remove();
+            $(this).parents('.moment').remove();
+        }
+    })
 
     // Handle clicking on a moment.
     // $(document.body).on('click', '.block', function(e) {
