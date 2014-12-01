@@ -168,17 +168,21 @@ body {
     line-height: 250px;
     font-size: 16px;
     vertical-align: middle;
-    background-color: lightgreen;
+    background-color: #FFFFFF;
 }
 
 .add-block {
-    background-color: #999999;
+    background-color: #FFFFFF;
     height: 20px;
     width: 100%;
 }
 
+.add-block:hover {
+    background-color: lightgreen;
+}
+
 .add-moment:hover {
-    background-color: #EFEFEF;
+    background-color: lightgreen;
 }
 
 #delete-moment {
