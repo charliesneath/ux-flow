@@ -1,6 +1,6 @@
 Parse.initialize("biZJpWUnJXDaj2nWgclmbqEL1CbivgnqhFWvcoLu", "A6aALGmVvDvo06q8n6g9V0NlO6s87TcmwK9hXJSP");
 
-var blockSizeIncrement = 80;
+var blockSizeIncrement = 80; // 80px height + 10px padding + 10px padding
 var draggedElement = null;
 var draggedSequence = null;
 var elementToDelete = null;
@@ -38,8 +38,7 @@ $(function() {
     })
 
     $(document.body).on('hover', '.block', function() {
-      $(this).find('.delete-moment').toggle();
-      $(this).find('.change-size').toggle();
+      $(this).find('.block-control').toggle();
     });
 
     $(document.body).on('click', '.add-moment', function() {
@@ -49,7 +48,7 @@ $(function() {
             var moment = document.createElement('div');
             $(moment).addClass('moment');
             $(moment).attr('draggable', 'true');
-            $(moment).html(newAddBlock + newBlock + newAddBlock);
+            $(moment).append(newAddBlock).append($(newBlock).data('height', '1')).append(newAddBlock);
             $(this).after(newAddMoment).after(moment);
         }
         saveFlow();
@@ -57,10 +56,7 @@ $(function() {
 
     // Add new block
     $(document.body).on('click', '.add-block', function() {
-        $(this).after(newAddBlock).after(newBlock);
-        var moment = $(this).parent('.moment')[0].children;
-        var newBlockIndex = $(this).index() + 1;
-        $(moment[newBlockIndex]).data('height', '1');
+        $(this).after(newAddBlock).after($(newBlock).data('height', '1'));
         saveFlow();
     });
 
@@ -76,36 +72,50 @@ $(function() {
         }
     })
 
-    // Handle clicking on a moment.
-    $(document.body).on('click', '.block', function(e) {
-        if ($(e.target).hasClass('bigger')) {
-            // Include height of new block element
-            var newHeight = $(this).height() + blockSizeIncrement + 20;
-            $(this).height(newHeight);
-            $(this).data('height', $(this).data('height') + 1);
-        } else if ($(e.target).hasClass('smaller')) {
-            // Check if the moment is at the smallest size.
-            if ($(this).height() >= blockSizeIncrement) {
-                var newHeight = $(this).height() - blockSizeIncrement - 20;
-                $(this).height(newHeight);
-                $(this).data('height', $(this).data('height') - 1);
-            }
-        } else if ($(e.target).hasClass('delete-moment')) {
-            // Remove moment, as long as it's not the last in the whole flow.
-            if ($(this).parents('.sequence').find('.block').length > 1) {
-                // Remove add moment.
-                $(this).prev().remove();
-                $(this).remove();
-            }
+    $(document.body).on('click', '.change-size', function(e) {
+        var block = $(this).parents('.block');
+        var heightUnits = parseInt($(block).data('height'));
+        if ($(this).hasClass('bigger')) {
+            changeBlockSize(block, heightUnits + 1);
         } else {
-            // Otherwise, just show the editable text.
-            $(this).find('p').hide();
-            $(this).find('textarea').show();
-            $(this).find('textarea').focus();
-            $(this).addClass('focus');
+            if (heightUnits > 1) {
+                changeBlockSize(block, heightUnits - 1);
+            }
         }
-        saveFlow();
-    })
+    });
+
+    $(document.body).on('click', '.hide-block', function(e) {
+        var block = $(this).parents('.block');
+        $(block).toggleClass('hidden');
+    });
+
+    // Handle clicking on a moment.
+    // $(document.body).on('click', '.block', function(e) {
+    //     if ($(e.target).hasClass('bigger')) {
+    //         var heightUnits = parseInt($(this).data('height'));
+    //         changeBlockSize(this, heightUnits + 1);
+    //     } else if ($(e.target).hasClass('smaller')) {
+    //         // Check if the moment is at the smallest size.
+    //         if ($(this).height() > blockSizeIncrement) {
+    //             var heightUnits = parseInt($(this).data('height'));
+    //             changeBlockSize(this, heightUnits - 1);
+    //         }
+    //     } else if ($(e.target).hasClass('delete-block')) {
+    //         // Remove moment, as long as it's not the last in the whole flow.
+    //         if ($(this).parents('.sequence').find('.block').length > 1) {
+    //             // Remove add moment.
+    //             $(this).prev().remove();
+    //             $(this).remove();
+    //         }
+    //     } else {
+    //         // Otherwise, just show the editable text.
+    //         $(this).find('p').hide();
+    //         $(this).find('textarea').show();
+    //         $(this).find('textarea').focus();
+    //         $(this).addClass('focus');
+    //     }
+    //     saveFlow();
+    // })
 
     $(document.body).on('blur', 'textarea', function() {
         if ($(this).val() == '') {
@@ -192,6 +202,13 @@ $(function() {
         e.originalEvent.stopPropagation();
     })
 })
+
+// Receives update heights units variable, depending on if block was made bigger or smaller.
+function changeBlockSize(block, newHeightUnits) {
+   var newHeight = (newHeightUnits * blockSizeIncrement) + ((newHeightUnits - 1) * 20);
+   $(block).height(newHeight);
+   $(block).data('height', newHeightUnits);
+}
 
 function addNewSequence(clickIndex) {
     var flow = $('#flow').children();

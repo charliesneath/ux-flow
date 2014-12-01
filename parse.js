@@ -188,8 +188,7 @@ function displayFlow(data) {
                     
                     $(blocks[blockKey]).height(newHeight);
                     $(blocks[blockKey]).data('height', heightUnits);
-                    $(blocks[blockKey]).find('textarea').val(heightUnits + ', ' + newHeight);
-                    // $(blocks[blockKey]).find('textarea').val(block['content']);
+                    $(blocks[blockKey]).find('textarea').val(block['content']);
                 })
             })
         });

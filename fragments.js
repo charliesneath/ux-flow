@@ -1,10 +1,9 @@
 var newBlock = '\
     <div class="block">\
-        <div class="delete-moment">&times;</div>\
-        <ul class="change-size">\
-            <li class="bigger">+</li>\
-            <li class="smaller">-</li>\
-        </ul>\
+        <div class="block-control delete-block">&times;</div>\
+        <div class="block-control hide-block">&#9680;</div>\
+        <div class="block-control change-size bigger">+</div>\
+        <div class="block-control change-size smaller block-control">-</div>\
         <textarea draggable=true></textarea>\
     </div>';
 

@@ -100,7 +100,7 @@ body {
     text-align: center;
     border: none;
     vertical-align: middle;
-    background-color: #FFFFFF;
+    background-color: transparent;
     border: none;
     box-sizing: border-box;
     line-height: 1em;
@@ -121,23 +121,6 @@ body {
     background-color: #EFEFEF;
 }
 
-.block {
-    margin: 0;
-    display: inline-block;
-    width: 220px;
-    height: 80px;
-    text-align: center;
-    font-size: 11px;
-    cursor: move;
-    vertical-align: top;
-    position: relative;
-    border: 1px solid black;
-    /*box-sizing: border-box;*/
-    white-space: normal;
-    padding: 1em;
-    box-sizing: border-box;
-}
-
 .moment.new {
     background-color: #EFEFEF;
 }
@@ -146,11 +129,13 @@ body {
     border: 1px dashed #000000;
 }
 
-.moment .delete-moment {
+.block-visibility {
     width: 25px;
+    height: 25px;
+    line-height: 25px;
     position: absolute;
-    top: 1px;
-    left: 1px;
+    top: 25px;
+    left: 0px;
     text-align: center;
     display: none;
     cursor: pointer;
@@ -209,15 +194,62 @@ body {
     background-color: white;
 }
 
-.change-size {
+.block {
+    margin: 0;
+    display: inline-block;
+    width: 220px;
+    height: 80px;
+    text-align: center;
+    font-size: 11px;
+    cursor: move;
+    vertical-align: top;
+    position: relative;
+    border: none;
+    box-sizing: border-box;
+    white-space: normal;
+    padding: 10px;
+    background-color: #efefef;
+}
+
+.block.hidden {
+    background-color: #FFFFFF;
+}
+
+.block-control {
     list-style-type: none;
     padding: 0;
     margin: 0;
     position: absolute;
-    top: 1px;
-    right: 1px;
+    right: 0px;
     width: 25px;
+    height: 25px;
+    line-height: 25px;
     display: none;
+    cursor: pointer;
+}
+
+.block-control:hover {
+    background-color: #CCCCCC;
+}
+
+.block-control.hide-block {
+    left: 0px;
+    top: 25px;
+}
+
+.block-control.bigger {
+    right: 0px;
+    top: 0px;
+}
+
+.block-control.smaller {
+    right: 0px;    
+    top: 25px;
+}
+
+.block-control.delete-block {
+    top: 0px;
+    left: 0px;
 }
 
 #delete-moment.delete-enter {
